@@ -1,6 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common'
+import { APP_GUARD } from '@nestjs/core'
 import { ConfigModule } from '@nestjs/config'
-import { ThrottlerModule } from '@nestjs/throttler'
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler'
 import { appConfig } from './config/app.config'
 import { CorrelationIdMiddleware } from './middleware/correlation-id.middleware'
 import { FileSizeLimitMiddleware } from './middleware/file-size-limit.middleware'
@@ -25,6 +26,9 @@ import { ProxyController } from './controllers/proxy.controller'
     }),
   ],
   controllers: [HealthController, ProxyController],
+  providers: [
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
