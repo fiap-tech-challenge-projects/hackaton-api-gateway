@@ -39,13 +39,13 @@ export class ProxyController {
     })
   }
 
+  // IMPORTANT: More specific routes must be declared before generic ones.
+  // /api/v1/analyses/:id/report must come before /api/v1/analyses/:id,
+  // and /api/v1/reports/:id must come before /api/v1/reports, so that
+  // NestJS matches the specific path first during route resolution.
+
   @All('/api/v1/analyses')
   proxyAnalyses(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction): void {
-    this.uploadProxy(req, res, next)
-  }
-
-  @All('/api/v1/analyses/:id')
-  proxyAnalysisById(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction): void {
     this.uploadProxy(req, res, next)
   }
 
@@ -58,13 +58,18 @@ export class ProxyController {
     this.reportProxy(req, res, next)
   }
 
-  @All('/api/v1/reports')
-  proxyReports(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction): void {
-    this.reportProxy(req, res, next)
+  @All('/api/v1/analyses/:id')
+  proxyAnalysisById(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction): void {
+    this.uploadProxy(req, res, next)
   }
 
   @All('/api/v1/reports/:id')
   proxyReportById(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction): void {
+    this.reportProxy(req, res, next)
+  }
+
+  @All('/api/v1/reports')
+  proxyReports(@Req() req: Request, @Res() res: Response, @Next() next: NextFunction): void {
     this.reportProxy(req, res, next)
   }
 
